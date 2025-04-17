@@ -47,6 +47,10 @@ async def upload_document(file: UploadFile = File(...)):
           description="Ask a question about the uploaded document")
 async def ask_question(request: QuestionRequest):
     try:
-        return {"answer": "This is a mock answer"}
+        # Get relevant context using embeddings
+        context = embedding_service.get_relevant_context(request.question)
+        # Generate answer using LLM
+        answer = llm_service.generate_answer(request.question, context)
+        return QuestionResponse(answer=answer)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
