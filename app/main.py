@@ -29,6 +29,7 @@ async def upload_document(file: UploadFile = File(...)):
     try:
         # Use the service to get text
         chunks = await document_service.process_document(file)
+        
         return JSONResponse(content={"message": "Document processed successfully", "text": chunks})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
