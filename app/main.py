@@ -1,5 +1,7 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from app.services.document_services import DocumentService
 
 
 
@@ -15,6 +17,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Initialize services
+document_service = DocumentService()
+
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
@@ -28,9 +33,11 @@ async def upload_document(file: UploadFile = File(...)):
     if not file.filename.endswith('.pdf'):
         raise HTTPException(status_code=400, detail="Only PDF files are allowed")
     else:
-        # Save the file to a temporary location or process it directly
-        with open(file.filename, "wb") as f:
-            content = await file.read()
-            f.write(content)
-        return {"filename": file.filename, "content_type": file.content_type}
+        try:
+            # Process the document
+            text = await document_service.get_text(file)
+            return JSONResponse(content={"message": "Document processed successfully", "text": text})
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+        
 
