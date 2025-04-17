@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from app.service.document_service import DocumentService  
 from app.service.embedding_service import EmbeddingService
 from app.model.schemas import QuestionRequest, QuestionResponse
+from app.service.llm_service import LLMService
 
 app = FastAPI()
 
@@ -19,6 +20,8 @@ app.add_middleware(
 # Initialize service
 document_service = DocumentService()
 embedding_service = EmbeddingService()
+llm_service = LLMService()
+
 
 @app.get("/")
 async def root():
