@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from app.service.document_service import DocumentService  
 from app.service.embedding_service import EmbeddingService
+from app.model.schemas import QuestionRequest, QuestionResponse
 
 app = FastAPI()
 
@@ -34,5 +35,15 @@ async def upload_document(file: UploadFile = File(...)):
         # Use the embedding service to get embeddings
         embedding_service.generate_embeddings(chunks)
         return {"message": "Document processed successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/question", 
+          response_model=QuestionResponse,
+          summary="Ask Question",
+          description="Ask a question about the uploaded document")
+async def ask_question(request: QuestionRequest):
+    try:
+        return {"answer": "This is a mock answer"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
