@@ -2,6 +2,7 @@ from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from app.service.document_service import DocumentService  
+from app.service.embedding_service import EmbeddingService
 
 app = FastAPI()
 
@@ -16,6 +17,7 @@ app.add_middleware(
 
 # Initialize service
 document_service = DocumentService()
+embedding_service = EmbeddingService()
 
 @app.get("/")
 async def root():
@@ -29,7 +31,8 @@ async def upload_document(file: UploadFile = File(...)):
     try:
         # Use the service to get text
         chunks = await document_service.process_document(file)
-        
-        return JSONResponse(content={"message": "Document processed successfully", "text": chunks})
+        # Use the embedding service to get embeddings
+        embedding_service.generate_embeddings(chunks)
+        return {"message": "Document processed successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
