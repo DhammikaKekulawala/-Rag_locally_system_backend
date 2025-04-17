@@ -19,6 +19,8 @@ app.add_middleware(
 async def root():
     return {"message": "Hello World"}
 
+
+# Endpoint to upload a PDF document
 @app.post("/upload", 
          summary="Upload PDF Document",
          description="Upload a PDF document for processing and embedding")
