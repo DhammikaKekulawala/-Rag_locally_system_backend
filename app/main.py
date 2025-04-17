@@ -28,7 +28,7 @@ async def upload_document(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="Only PDF files are allowed")
     try:
         # Use the service to get text
-        text = document_service.get_text(file)
-        return JSONResponse(content={"message": "Document processed successfully", "text": text})
+        chunks =  document_service.process_document(file)
+        return JSONResponse(content={"message": "Document processed successfully", "text": chunks})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
